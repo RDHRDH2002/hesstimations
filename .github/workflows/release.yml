@@ -1,0 +1,35 @@
+name: release
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Create tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -n "$(git tag --points-at HEAD)" ]; then
+            echo "Commit already tagged: $(git tag --points-at HEAD). Nothing to do."
+            exit 0
+          fi
+          prefix="v$(date -u +%Y.%m)"
+          last=$(git tag -l "${prefix}.*" | sed "s/^${prefix}\.//" | sort -n | tail -1)
+          next="${prefix}.$(( ${last:-0} + 1 ))"
+          echo "Releasing ${next} at ${GITHUB_SHA}"
+          gh release create "${next}" --target "${GITHUB_SHA}" --title "${next}" --generate-notes
