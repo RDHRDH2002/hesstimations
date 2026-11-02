@@ -218,3 +218,30 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- The Hesstimations ---
+# Secrets
+.env
+.env.*
+!.env.example
+# Data never belongs in this public repo
+data/
+raw/
+phase0/
+*.parquet
+*.json.gz
+*.csv.gz
+*.dump
+*.backup
+*.age
+# Node / Next.js
+node_modules/
+.next/
+out/
+# Supabase CLI local state
+supabase/.temp/
+supabase/.branches/
+# Editors / OS
+.vscode/*
+!.vscode/extensions.json
+Thumbs.db
